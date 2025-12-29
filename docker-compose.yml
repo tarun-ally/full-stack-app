@@ -5,7 +5,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
-    container_name: my-backend
     ports:
       - "5000:5000"
 
@@ -13,7 +12,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    container_name: my-frontend
     ports:
       - "80:80"
     depends_on:

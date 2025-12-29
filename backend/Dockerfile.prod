@@ -1,9 +1,27 @@
-FROM node:20-alpine
+# -------- Stage 1: Build --------
+FROM node:20-alpine AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
+
 COPY . .
-# Compile TypeScript
-RUN npm run build
+RUN npm run build   # outputs to /app/dist
+
+
+# -------- Stage 2: Run --------
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install only production deps
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy built JS from builder
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 5000
-CMD ["npm", "start"] # or whatever your entry point is
+
+CMD ["node", "dist/index.js"]
