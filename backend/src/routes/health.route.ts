@@ -2,8 +2,8 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/health",(_req,res)=>{
-    res.json({status:"OK",service:"backend is "});
+router.get("/",(_req,res)=>{
+    res.json({status:"OK",service:"backend is ",timestamp: new Date().toISOString(),});
 })
 
  export default router;

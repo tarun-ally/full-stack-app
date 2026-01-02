@@ -1,5 +1,6 @@
 import express from "express";
-import healthRoute from "./routes/health.route";
+import routes from "./routes";
+
 import dotenv from "dotenv";
 import cors from "cors";
 
@@ -15,8 +16,7 @@ app.use(cors({
     credentials:true,
 }))
 app.use(express.json());
-app.use("/api",healthRoute);
-
+app.use("/api",routes);
 
 export default app;
 
