@@ -13,15 +13,27 @@ export type EventJob = EventInput&{
 
 class EventQueue{
     private queue:EventJob[]=[];
+    private store = new Map<string,EventJob>();
+
     enqueue(event:EventJob){
         this.queue.push(event);
+        this.store.set(event.id,event);
 
     }
     dequeue():EventJob|undefined{
         return this.queue.shift();
     }
+    update(event:EventJob){
+        this.store.set(event.id,event);
+    }
+    getById(id:string):EventJob|undefined{
+        return this.store.get(id);
+    }
+    list():EventJob[]{
+        return Array.from(this.store.values());
+    }
     size(){
-        return this.size.length;
+        return this.queue.length;
     }
 }
 export const eventQueue = new EventQueue();

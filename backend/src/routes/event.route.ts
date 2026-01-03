@@ -37,5 +37,13 @@ router.post("/",(req,res)=>{
 router.get("/",(req,res)=>{
     res.json(listEvents())
 })
+router.get("/:id",(req,res)=>{
+    const event = eventQueue.getById(req.params.id);
+    if(!event){
+        return res.status(404).json({message:"Event no found"});
+
+    }
+    return res.status(200).json(event)
+})
 
 export default router;
