@@ -3,6 +3,7 @@ import { createEvent, listEvents } from "../services/event.service";
 import { EventSchema } from "../types/event";
 import { uuidv4 } from "zod";
 import { eventQueue } from "../queues/event.queue";
+import { randomUUID } from "crypto";
 
 
 
@@ -20,10 +21,12 @@ router.post("/",(req,res)=>{
 
     }
     const event ={
-        id:uuidv4(),
+        id:randomUUID(),
         ...result.data,
         status:"PENDING" as const,
        createdAt: new Date().toISOString(),
+       attempts:0,
+       maxAttempts:3
     }
     eventQueue.enqueue(event);
     res.status(202).json({

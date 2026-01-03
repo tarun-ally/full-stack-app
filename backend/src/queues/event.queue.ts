@@ -4,8 +4,10 @@ import { EventInput } from "../types/event";
 
 export type EventJob = EventInput&{
     id: string;
-    creaedAt:string;
-     status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+    createdAt:string;
+    status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+    attempts: number;
+    maxAttempts: number;
 
 };
 
