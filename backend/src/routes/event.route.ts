@@ -9,7 +9,7 @@ import { randomUUID } from "crypto";
 
 
 const router =Router();
-router.post("/",(req,res)=>{
+router.post("/",async (req,res)=>{
 
     const result = EventSchema.safeParse(req.body);
 
@@ -28,7 +28,13 @@ router.post("/",(req,res)=>{
        attempts:0,
        maxAttempts:3
     }
-    eventQueue.enqueue(event);
+   await eventQueue.add("process-event",event,{
+        attempts:3,
+        backoff:{
+            type:"exponential",
+            delay:2000
+        }
+    });
     res.status(202).json({
          message: "Event accepted for processing",
     eventId: event.id,
@@ -37,8 +43,8 @@ router.post("/",(req,res)=>{
 router.get("/",(req,res)=>{
     res.json(listEvents())
 })
-router.get("/:id",(req,res)=>{
-    const event = eventQueue.getById(req.params.id);
+router.get("/:id",async (req,res)=>{
+    const event = await eventQueue.getJob(req.params.id);
     if(!event){
         return res.status(404).json({message:"Event no found"});
 
