@@ -2,6 +2,7 @@
 import { Worker } from "bullmq";
 import { redisConnection } from "../redis/connection";
 import { dlqQueue } from "../queues/dlq.queue";
+import { isAlreadyProcessed, markProcessed } from "../redis/idempotency";
 
 console.log("🟢 Redis Event worker started");
 export const EVENT_QUEUE_NAME = "events";
@@ -12,11 +13,17 @@ export const eventWorker =  new Worker(
     console.log(`⚙️ processing ${event.type} ${event.id} | atempt ${job.attemptsMade+1}`);
   
     for(const channel of event.channels){
-      console.log(`📨  sending ${channel} for ${event.id}`);
+   
+      const key = `event:${event.id}:${channel}`;
+      if(await isAlreadyProcessed(key)){
+        console.log(`⏭️ Skipping ${channel} for ${event.id} (idempotent)`);
+        continue;
+      }
+         console.log(`📨  sending ${channel} for ${event.id}`);
         if(channel =="EMAIL"){
       throw new Error("Random failure");
     }
-      
+      await markProcessed(key);
     }
      console.log(`✅ Event completed ${event.id}`);
     
