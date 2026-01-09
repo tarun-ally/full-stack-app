@@ -1,74 +1,72 @@
 🛠 Prerequisites
 
 Make sure you have installed:
+- Docker
+- Docker Compose
 
-Docker
+🚀 Quick Start
 
-Docker Compose
-
-🚀 Local Development (Hot Reload)
-
-This will run frontend and backend with live reload.
-
-Clone the repository:
-
+```bash
+# Clone and setup
 git clone <your-repo-url>
-cd project-root
+cd full-stack-app
 
+# Start development environment
+./setup-dev.sh
+```
 
-Run Docker Compose for development:
+Access your services:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+- Redis: localhost:6379
 
+## 🎯 What This System Does
+
+This is a **distributed event processing system** that handles multi-channel notifications:
+
+- **Event Types**: USER_SIGNUP, ORDER_CREATED, PASSWORD_RESET
+- **Notification Channels**: EMAIL, SMS, PUSH
+- **Features**: Queue processing, retry logic, dead letter queue, idempotency
+
+## 🏗 Architecture
+
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: Node.js + Express + TypeScript
+- **Queue**: BullMQ + Redis
+- **Workers**: Background job processing
+- **Containerization**: Docker + Docker Compose
+
+## 📝 API Endpoints
+
+```
+POST /api/events     - Create new event
+GET  /api/events     - List all events
+GET  /api/events/:id - Get specific event
+GET  /api/health     - Health check
+```
+
+## 🔧 Development Commands
+
+```bash
+# Development
 docker-compose -f docker-compose.dev.yml up --build
 
-
-Access your services:
-
-Frontend (Vite dev server): http://localhost:5173
-
-Backend (Node API): http://localhost:5000
-
-Stop development environment:
-
-docker-compose -f docker-compose.dev.yml down
-
-
-✅ Notes:
-
-Frontend edits reflect instantly due to Vite hot reload.
-
-Backend edits reflect instantly due to ts-node-dev.
-
-🏗 Production Build
-
-This will build optimized images for production and serve frontend via Nginx.
-
-Build and start production containers:
-
+# Production
 docker-compose up --build -d
 
+# Stop services
+docker-compose -f docker-compose.dev.yml down
+```
 
-Access your services:
+## 🧪 Testing the System
 
-Frontend (Nginx): http://localhost
+1. Open frontend at http://localhost:5173
+2. Click "Create Test Events" buttons
+3. Watch console logs for processing
+4. See events update in real-time
 
-Backend (Node API): http://localhost:5000
+## 📊 Monitoring
 
-Stop production environment:
-
-docker-compose down
-
-
-✅ Notes:
-
-Frontend is served as static files via Nginx.
-
-Backend runs compiled JavaScript (dist/) in production mode.
-
-No hot reload in production.
-
-⚡ Useful Commands
-Command	                                             ( Purpose)
-docker-compose -f docker-compose.dev.yml up --build	 ( Start development environment)
-docker-compose -f docker-compose.dev.yml down	(Stop development environment)
-docker-compose up --build -d	(Start production containers in detached mode)
-docker-compose down	 (Stop production containers)
+- Check Docker logs: `docker-compose logs -f`
+- Redis CLI: `docker exec -it <redis-container> redis-cli`
+- Worker logs show processing status and failures

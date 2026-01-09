@@ -1,11 +1,10 @@
-import { redisClient, redisConnection } from "./connection";
+import { redisClient } from "./connection";
 
-export async function isAlreadyProcessed(key:string){
-    const exist  = await redisClient.get(key);
+export async function isAlreadyProcessed(key: string): Promise<boolean> {
+    const exists = await redisClient.get(key);
+    return Boolean(exists);
+}
 
-    return Boolean(exist);
-
-};
-export async function markProcessed(key: string){
-    await redisClient.set(key,"true", "EX", 60*24*24,)
+export async function markProcessed(key: string): Promise<void> {
+    await redisClient.set(key, "true", "EX", 60 * 60 * 24); // 24 hours
 }
